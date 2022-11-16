@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
 
     def the_button_was_clicked(self):
         # call(["Python",'C:/Users/kshit/Documents/Final Year Project/desktopApp/sign_language_detection/webcam_feed.py'],shell=True)
-        webcam_feed.main()
+        webcam_feed.run_feed()
         print("Connected!")
 
 #Create an instance of QApplication
