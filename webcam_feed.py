@@ -13,12 +13,16 @@ HEIGHT = 1080
 FPS = 60.0
 fmt = pyvirtualcam.PixelFormat.BGR
 
+# Defining configuration for camera
+handler = None
+
 def run_feed():
     """
         Input   :   None
         Utility :   Capture video feed from camera
         Output  :   None
     """
+    global handler
     # Defining constants
     frame_buffer = 30
     actions = np.array(
@@ -38,12 +42,12 @@ def run_feed():
     mp_holistic = landmarkDetection.get_holistic()
 
     # Defining camera handler
-    handler = cv2.VideoCapture(0)
-    
-    # Defining configuration for camera
+    # handler = cv2.VideoCapture(0)
     handler = cv2.VideoCapture(0)    
     handler.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
     handler.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT) 
+    
+    
     sequence = []
 
     # Open mediapipe holistic
@@ -98,8 +102,10 @@ def run_feed():
                     break
                 if key == ord('q'):
                     break
-        handler.release()
-        cv2.destroyAllWindows()
+def stop_feed():
+
+    handler.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     run_feed()
