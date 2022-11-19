@@ -3,14 +3,12 @@ import pyvirtualcam
 import numpy as np
 
 # Internal Imports
+from config import config
 from gesture_detection import GestureDetection
 from gesture_interpretation import GestureInterpretation
 from landmark_detection import PredictLandmarks
 
-# Parameters for camera inputs
-WIDTH = 1920
-HEIGHT = 1080
-FPS = 60.0
+# Defining format for virtual camera input
 fmt = pyvirtualcam.PixelFormat.BGR
 
 # Defining configuration for camera
@@ -24,13 +22,12 @@ def run_feed():
     """
     global handler
     # Defining constants
-    frame_buffer = 30
+    frame_buffer = config["frame_buffer"]
+    WIDTH = config["WIDTH"]
+    HEIGHT = config["HEIGHT"]
+    FPS = config["FPS"]
     actions = np.array(
-        [
-            'allergy', 
-            'emergency', 
-            'hospital'
-        ]
+        config["actions"]
     )
 
     # Initialize Inferencing components
@@ -47,20 +44,31 @@ def run_feed():
     handler.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
     handler.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT) 
     
-    
     sequence = []
 
     # Open mediapipe holistic
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with mp_holistic.Holistic(
+        min_detection_confidence=config["min_detection_confidence"],
+        min_tracking_confidence=config["min_tracking_confidence"]
+    ) as holistic:
         # Open link to virtual camera
-        with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=20, fmt=fmt) as cam: 
+        with pyvirtualcam.Camera(
+            width=WIDTH, 
+            height=HEIGHT, 
+            fps=FPS, 
+            fmt=fmt
+        ) as cam: 
             # Run feed
             while True:
                 gesture = ""
                 ret, frame = handler.read()                
-                key = cv2.waitKey(1)
+                # key = cv2.waitKey(1)
                 if ret:            
-                    frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation=cv2.INTER_CUBIC)
+                    frame = cv2.resize(
+                        frame, 
+                        (WIDTH, HEIGHT), 
+                        interpolation=cv2.INTER_CUBIC
+                    )
                     landmarks = landmarkDetection.mediapipe_detection(
                         image=frame,
                         model=holistic
@@ -68,13 +76,15 @@ def run_feed():
                     keypoints = landmarkDetection.extract_keypoints(
                         landmarks
                     )
-                    
+                
                     sequence.append(keypoints)
-                    sequence = sequence[-30:]
+                    sequence = sequence[
+                        -1 * frame_buffer:
+                    ]
 
                     # TODO : Replace "None" by landmarks
-                    is_signing = gestureDetection.predict(keypoints)  
-                    if is_signing and len(sequence) == frame_buffer:                        
+                    is_signing = gestureDetection.predict(keypoints)                      
+                    if is_signing and len(sequence) == frame_buffer:
                         # Run inferencing
                         result, max_index = gestureInterpretation.predict(
                             sequence=sequence
@@ -100,11 +110,18 @@ def run_feed():
                 else:
                     print("Camera load failed")
                     break
-                if key == ord('q'):
-                    break
+                # if key == ord('q'):
+                #     break
+                
 def stop_feed():
-
+    """
+        Input   :   None
+        Utility :   Stop camera feed access
+        Output  :   None
+    """
+    # Release camera handler
     handler.release()
+    # Destroy all created windows
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
