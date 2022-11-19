@@ -62,7 +62,7 @@ def run_feed():
             while True:
                 gesture = ""
                 ret, frame = handler.read()                
-                # key = cv2.waitKey(1)
+                key = cv2.waitKey(1)
                 if ret:            
                     frame = cv2.resize(
                         frame, 
@@ -110,8 +110,8 @@ def run_feed():
                 else:
                     print("Camera load failed")
                     break
-                # if key == ord('q'):
-                #     break
+                if key == ord('q'):
+                    break
                 
 def stop_feed():
     """
