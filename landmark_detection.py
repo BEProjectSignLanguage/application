@@ -2,6 +2,9 @@ import mediapipe as mp
 import cv2
 import numpy as np
 
+# Internal imports
+from config import config
+
 class PredictLandmarks:
 
     def __init__(self):
@@ -11,14 +14,7 @@ class PredictLandmarks:
             (245,117,16), 
             (117,245,16), 
             (16,117,245)
-        ]
-        self.actions = np.array(
-            [
-                'allergy',
-                'emergency', 
-                'hospital'
-            ]
-        )
+        ]        
 
     def get_holistic(self):
         return self.mp_holistic
@@ -85,7 +81,7 @@ class PredictLandmarks:
             )
             cv2.putText(
                 output_frame, 
-                self.actions[num], 
+                config["actions"][num], 
                 (0, 85+num*40), 
                 cv2.FONT_HERSHEY_SIMPLEX, 
                 1, 

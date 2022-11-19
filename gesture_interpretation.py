@@ -2,6 +2,9 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
+# Internal imports 
+from config import config
+
 class GestureInterpretation:
 
     def __init__(self, output_units):
@@ -40,7 +43,7 @@ class GestureInterpretation:
         )
         # Model weights
         self.model.load_weights(
-            './models/interpretation.h5'
+            config["interpretation_model_path"]
         )
     
     def predict(self, sequence):

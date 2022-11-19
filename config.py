@@ -12,5 +12,9 @@ config = {
         'emergency', 
         'hospital'
     ],
+    # Specifics for detection model
+    "detection_model_path" : "./models/detections.h5",
+    # Specifics for interpretation model
     "frame_buffer" : 30,
+    "interpretation_model_path" : "./models/interpretation.h5",
 }
