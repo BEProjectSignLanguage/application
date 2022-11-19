@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
     def the_button_was_clicked(self):
         if not self.started:
             self.started=True
-            self.button.setText("Stoppppp")
+            self.button.setText("Disconnect livefeed")
             webcam_feed.run_feed()
         else:
 
