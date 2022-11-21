@@ -12,10 +12,10 @@ class GestureInterpretation:
         self.model = Sequential(
             [
                 LSTM(
-                    64, 
+                    128, 
                     return_sequences=True, 
                     activation='relu', 
-                    input_shape=(30,1662)
+                    input_shape=(30,258)
                 ),
                 LSTM(
                     128, 
@@ -23,16 +23,16 @@ class GestureInterpretation:
                     activation='relu'
                 ),
                 LSTM(
-                    64, 
+                    128, 
                     return_sequences=False, 
                     activation='relu'
                 ),
                 Dense(
-                    64, 
+                    128, 
                     activation='relu'
                 ),
                 Dense(
-                    32, 
+                    64, 
                     activation='relu'
                 ),
                 Dense(

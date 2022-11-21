@@ -8,6 +8,9 @@ config = {
     "min_tracking_confidence" : 0.5,
     # Actions detected by inferencing model
     "actions" : [
+        'not signing',
+        'blood',
+        'medicine',
         'allergy', 
         'emergency', 
         'hospital'
