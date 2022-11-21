@@ -2,10 +2,16 @@ import sys
 from subprocess import call
 #Import QApplication and all the required widgets
 import webcam_feed
-from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QMainWindow,QPushButton, QGridLayout
+from PyQt6.QtWidgets import (
+    QApplication,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QLabel,
+)
 from PyQt6.QtGui import QPixmap
 
-class MainWindow(QMainWindow):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -17,18 +23,15 @@ class MainWindow(QMainWindow):
         self.setGeometry(600, 250, 290, 290)
         # helloMsg = QLabel("<h1>Welcome, User!</h1>", parent=self)
         # helloMsg.move(0, 0)
+        layout = QVBoxLayout()
 
-        self.label = QLabel(self)
+        self.label = QLabel()
         pixmap = QPixmap("static\dhh.png")
         self.label.setPixmap(pixmap)
-        self.label.setMinimumWidth(260)
-        self.label.setMinimumHeight(260)
 
         self.button = QPushButton("Connect to livefeed!")
         self.button.setStyleSheet("""
         *{
-            height: 30%;
-            margin-top: 300%;
             background-color: rgb(128, 60, 224);
             border-style: outset;
             border-width: 2px;
@@ -43,8 +46,10 @@ class MainWindow(QMainWindow):
         """)
         self.button.setCheckable(True)
         self.button.clicked.connect(self.the_button_was_clicked)
-        # Set the central widget of the Window.
-        self.setCentralWidget(self.button)
+        
+        layout.addWidget(self.label)
+        layout.addWidget(self.button)
+        self.setLayout(layout)
 
     def the_button_was_clicked(self):
         if not self.started:
@@ -52,7 +57,6 @@ class MainWindow(QMainWindow):
             self.button.setText("Disconnect livefeed")
             webcam_feed.run_feed()
         else:
-
             self.started=False
             webcam_feed.stop_feed()
             self.button.setText("Connect to livefeed!")
@@ -70,3 +74,4 @@ window.show()
 
 # Run your application's event loop
 sys.exit(app.exec())
+
