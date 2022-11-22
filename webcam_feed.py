@@ -1,6 +1,7 @@
 import cv2
 import pyvirtualcam
 import numpy as np
+from datetime import datetime
 
 # Internal Imports
 from config import config
@@ -29,6 +30,9 @@ def run_feed():
     actions = np.array(
         config["actions"]
     )
+    interpretation_threshold = config["interpretation_threshold"]
+    previous = None
+    now = None
 
     # Initialize Inferencing components
     landmarkDetection = PredictLandmarks()
@@ -60,6 +64,7 @@ def run_feed():
         ) as cam: 
             # Run feed
             while True:
+                now = datetime.now()
                 gesture = ""
                 ret, frame = handler.read()                
                 key = cv2.waitKey(1)
@@ -85,15 +90,17 @@ def run_feed():
                     # TODO : Replace "None" by landmarks
                     is_signing = gestureDetection.predict(keypoints)                      
                     if is_signing and len(sequence) == frame_buffer:
-                        # Run inferencing
+                        # Run classification
                         result, max_index = gestureInterpretation.predict(
                             sequence=sequence
-                        )            
-                        gesture = actions[max_index]
-                        frame = landmarkDetection.prob_viz(
-                            res=result,
-                            input_frame=frame,                    
-                        )        
+                        )       
+                        # Apply threshold on classification
+                        if result[max_index] > interpretation_threshold:   
+                            gesture = actions[max_index]
+                        # frame = landmarkDetection.prob_viz(
+                        #     res=result,
+                        #     input_frame=frame,                    
+                        # )        
                     cv2.putText(
                         frame, 
                         gesture, 
@@ -104,6 +111,19 @@ def run_feed():
                         2, 
                         cv2.LINE_AA
                     )   
+                    if previous is not None:
+                        delta = now - previous
+                        seconds = delta.seconds + delta.microseconds * (10 ** -6)
+                        cv2.putText(
+                            frame, 
+                            f"FPS : {1/seconds}", 
+                            (50, 300), 
+                            cv2.FONT_HERSHEY_COMPLEX, 
+                            2, 
+                            (0, 0, 0), 
+                            2, 
+                            cv2.LINE_AA
+                        )                      
                     cam.send(frame)                
                     cam.sleep_until_next_frame() 
                     # cv2.imshow("Feed", frame)
@@ -112,6 +132,7 @@ def run_feed():
                     break
                 if key == ord('q'):
                     break
+                previous = now
                 
 def stop_feed():
     """
