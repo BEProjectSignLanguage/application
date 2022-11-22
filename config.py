@@ -20,4 +20,5 @@ config = {
     # Specifics for interpretation model
     "frame_buffer" : 30,
     "interpretation_model_path" : "./models/interpretation.h5",
+    "interpretation_threshold" : 0.7
 }
