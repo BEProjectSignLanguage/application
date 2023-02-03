@@ -97,10 +97,10 @@ def run_feed():
                         # Apply threshold on classification
                         if result[max_index] > interpretation_threshold:   
                             gesture = actions[max_index]
-                        # frame = landmarkDetection.prob_viz(
-                        #     res=result,
-                        #     input_frame=frame,                    
-                        # )        
+                        frame = landmarkDetection.prob_viz(
+                            res=result,
+                            input_frame=frame,                    
+                        )        
                     cv2.putText(
                         frame, 
                         gesture, 
@@ -111,19 +111,19 @@ def run_feed():
                         2, 
                         cv2.LINE_AA
                     )   
-                    if previous is not None:
-                        delta = now - previous
-                        seconds = delta.seconds + delta.microseconds * (10 ** -6)
-                        cv2.putText(
-                            frame, 
-                            f"FPS : {1/seconds}", 
-                            (50, 300), 
-                            cv2.FONT_HERSHEY_COMPLEX, 
-                            2, 
-                            (0, 0, 0), 
-                            2, 
-                            cv2.LINE_AA
-                        )                      
+                    # if previous is not None:
+                    #     delta = now - previous
+                    #     seconds = delta.seconds + delta.microseconds * (10 ** -6)
+                    #     cv2.putText(
+                    #         frame, 
+                    #         f"FPS : {1/seconds}", 
+                    #         (50, 300), 
+                    #         cv2.FONT_HERSHEY_COMPLEX, 
+                    #         2, 
+                    #         (0, 0, 0), 
+                    #         2, 
+                    #         cv2.LINE_AA
+                    #     )                      
                     cam.send(frame)                
                     cam.sleep_until_next_frame() 
                     # cv2.imshow("Feed", frame)
@@ -132,7 +132,7 @@ def run_feed():
                     break
                 if key == ord('q'):
                     break
-                previous = now
+                # previous = now
                 
 def stop_feed():
     """
