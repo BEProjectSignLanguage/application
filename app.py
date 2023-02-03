@@ -26,7 +26,8 @@ class MainWindow(QWidget):
         layout = QVBoxLayout()
 
         self.label = QLabel()
-        pixmap = QPixmap("static\dhh.png")
+        pixmap = QPixmap("static\pict_logo.png")
+        self.label.setScaledContents(True)
         self.label.setPixmap(pixmap)
 
         self.button = QPushButton("Connect to livefeed!")
