@@ -10,7 +10,7 @@ class PredictLandmarks:
     def __init__(self):
         self.mp_holistic = mp.solutions.holistic # Holistic model
         self.mp_drawing = mp.solutions.drawing_utils # Drawing utilities
-        self.colors = [(245,117,16), (117,245,16), (16,117,245),(252, 186, 3),(25, 25, 207),(194, 16, 128)]
+        self.colors = [(245,117,16) for i in range(len(config["actions"]))]
 
     def get_holistic(self):
         return self.mp_holistic

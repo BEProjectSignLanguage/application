@@ -13,7 +13,9 @@ config = {
         'medicine',
         'allergy', 
         'emergency', 
-        'hospital'
+        'hospital',
+        'bandage',
+        'pain'
     ],
     # Specifics for detection model
     "detection_model_path" : "./models/detections.h5",
