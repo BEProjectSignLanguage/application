@@ -53,6 +53,7 @@ class GestureInterpretation:
             Output  :   Gesture (String)
         """
         result = self.model.predict(
-            np.expand_dims(sequence, axis=0)
+            np.expand_dims(sequence, axis=0),
+            verbose=0
         )[0]
         return result, np.argmax(result)
