@@ -1,7 +1,7 @@
 import sys
 from subprocess import call
 #Import QApplication and all the required widgets
-import webcam_feed
+from webcam_feed import WebcamFeed
 from PyQt6.QtWidgets import (
     QApplication,
     QPushButton,
@@ -14,6 +14,8 @@ from PyQt6.QtGui import QPixmap
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.webcamFeed = WebcamFeed()
 
         self.setWindowTitle("My App")
         self.setWindowTitle("Sign Language detector App")
@@ -76,16 +78,19 @@ class MainWindow(QWidget):
         if not self.started:
             self.started=True
             self.button.setText("Disconnect livefeed")
-            webcam_feed.run_feed()
+            self.webcamFeed.run_feed()
             print("Connected!")
         else:
             self.started=False
-            webcam_feed.stop_feed()
+            self.webcamFeed.stop_feed()
             self.button.setText("Connect to livefeed!")            
             print("Disconnected!")
 
     def confirm_sentence(self):
-        print(webcam_feed.keywords)
+        keyword_list = self.webcamFeed.keywords
+        self.webcamFeed.reset_occurence_counter()
+        self.webcamFeed.keywords = []
+        print(keyword_list)
 
 #Create an instance of QApplication
 app = QApplication(sys.argv)
@@ -95,7 +100,5 @@ window = MainWindow()
 window.show()
 # window = QWidget()
 
-
 # Run your application's event loop
 sys.exit(app.exec())
-
