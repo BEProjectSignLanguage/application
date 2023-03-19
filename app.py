@@ -46,23 +46,46 @@ class MainWindow(QWidget):
         }
         """)
         self.button.setCheckable(True)
-        self.button.clicked.connect(self.the_button_was_clicked)
+        self.button.clicked.connect(self.toggle_feed)
+
+        #   Add button to confirm sentence
+        self.confirm_button = QPushButton("Confirm sentence")
+        self.confirm_button.setStyleSheet("""
+        *{
+            background-color: rgb(128, 60, 224);
+            border-style: outset;
+            border-width: 2px;
+            border-radius: 10px;
+            border-color: beige;
+            font: bold 14px;
+            padding: 6px;
+        }
+        QPushButton:hover{
+            background-color: rgb(193, 81, 241);
+        }
+        """)
+        self.confirm_button.setCheckable(True)
+        self.confirm_button.clicked.connect(self.confirm_sentence)
         
         layout.addWidget(self.label)
         layout.addWidget(self.button)
+        layout.addWidget(self.confirm_button)
         self.setLayout(layout)
 
-    def the_button_was_clicked(self):
+    def toggle_feed(self):
         if not self.started:
             self.started=True
             self.button.setText("Disconnect livefeed")
             webcam_feed.run_feed()
+            print("Connected!")
         else:
             self.started=False
             webcam_feed.stop_feed()
-            self.button.setText("Connect to livefeed!")
-            
-        print("Connected!")
+            self.button.setText("Connect to livefeed!")            
+            print("Disconnected!")
+
+    def confirm_sentence(self):
+        print(webcam_feed.keywords)
 
 #Create an instance of QApplication
 app = QApplication(sys.argv)
