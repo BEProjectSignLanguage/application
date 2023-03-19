@@ -2,7 +2,7 @@ config = {
     # Camera parameters
     "WIDTH" : 1920,
     "HEIGHT" : 1080,
-    "FPS" : 20,
+    "FPS" : 30,
     # Mediapipe thresholds
     "min_detection_confidence" : 0.5,
     "min_tracking_confidence" : 0.5,
@@ -22,5 +22,6 @@ config = {
     # Specifics for interpretation model
     "frame_buffer" : 30,
     "interpretation_model_path" : "./models/interpretation.h5",
-    "interpretation_threshold" : 0.7
+    "interpretation_threshold" : 0.7,
+    "not_signing_interrupt_interval" : 5
 }
