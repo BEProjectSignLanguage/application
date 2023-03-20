@@ -23,8 +23,19 @@ class WebcamFeed:
         self.reset_occurence_counter()
         self.allow_inference = False
         self.gui_reference = app_reference
+        self.signing_status = "Not Signing"
+        self.sentence_display_start = None
+        self.sentence_display_end = None
+
+    def update_signing_status(self, sentence):
+        self.signing_status = sentence
+        self.sentence_display_start = datetime.now()
 
     def set_inference_status(self, allowed):
+        if allowed:
+            self.signing_status = "Signing"
+        else:
+            self.signing_status = "Not Signing"
         self.allow_inference = allowed
 
     def reset_keywords(self):
@@ -156,17 +167,32 @@ class WebcamFeed:
                             # frame = landmarkDetection.prob_viz(
                             #     res=result,
                             #     input_frame=frame,                    
-                            # )        
-                        # cv2.putText(
-                        #     frame, 
-                        #     gesture, 
-                        #     (50, 50), 
-                        #     cv2.FONT_HERSHEY_COMPLEX, 
-                        #     2, 
-                        #     (0, 0, 0), 
-                        #     2, 
-                        #     cv2.LINE_AA
-                        # )                        
+                            # )                                
+                        cv2.rectangle(
+                            frame, 
+                            (30, HEIGHT - 30),
+                            (WIDTH - 30, HEIGHT - 120),
+                            (252, 173, 3),
+                            -1,                            
+                        )    
+                        cv2.putText(
+                            frame, 
+                            self.signing_status, 
+                            (50, HEIGHT - 50), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, 
+                            (255, 255, 255), 
+                            2, 
+                            cv2.LINE_AA
+                        )         
+                        if self.sentence_display_start:
+                            self.sentence_display_end = datetime.now()
+                            time_delta = self.sentence_display_end - self.sentence_display_start
+                            #   IF sentence has been displayed for fixed time, replace status value
+                            if(time_delta.seconds >= config["sentence_display_persistence"]):
+                                self.signing_status = "Signing"          
+                                self.sentence_display_start = None
+                                self.sentence_display_end = None 
                         cam.send(frame)                
                         # cam.sleep_until_next_frame() 
                         # cv2.imshow("Feed", frame)
