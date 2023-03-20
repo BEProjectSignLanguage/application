@@ -153,11 +153,14 @@ class MainWindow(QWidget):
             print("Disconnected!")
 
     def confirm_sentence(self):
-        keyword_list = self.webcamFeed.keywords
+        keyword_list = self.webcamFeed.keywords        
         self.webcamFeed.reset_occurence_counter()
         self.webcamFeed.keywords = []
         #   TODO:   Call to API for sentence
-        #   Reset labels
+        sentence = str(keyword_list)
+        #   Call annotator through webcam feed handle
+        self.webcamFeed.update_signing_status(sentence=sentence)
+        #   Reset labels        
         self.update_detection_label("Reset for detection")
         self.update_keywords_placeholder("Reset for detection")
         print(keyword_list)
@@ -174,7 +177,7 @@ class MainWindow(QWidget):
         self.current_detection_placeholder.setText("<b>" + detected_keyword + "</b>")
 
     def update_keywords_placeholder(self, detected_keywords):
-        self.detected_keywords_placeholder.setText("<b>" + str(detected_keywords) + "</b>")
+        self.detected_keywords_placeholder.setText("<b>" + label_data + "</b>")
 
 #Create an instance of QApplication
 app = QApplication(sys.argv)
