@@ -10,12 +10,14 @@ from PyQt6.QtWidgets import (
     QLabel,
 )
 from PyQt6.QtGui import QPixmap
+from sentence_generation import sentenceGeneration
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.inference_allowed = False
         self.webcamFeed = WebcamFeed(self)
+        self.sentence_generator = sentenceGeneration()
 
         self.setWindowTitle("My App")
         self.setWindowTitle("Sign Language detector App")
@@ -72,6 +74,7 @@ class MainWindow(QWidget):
                     height: fit-content;
                 }
             """)
+        
         #   Buttons
         self.button = QPushButton("Connect to livefeed!")
         self.button.setStyleSheet("""
@@ -156,8 +159,8 @@ class MainWindow(QWidget):
         keyword_list = self.webcamFeed.keywords        
         self.webcamFeed.reset_occurence_counter()
         self.webcamFeed.keywords = []
-        #   TODO:   Call to API for sentence
-        sentence = str(keyword_list)
+        #   TODO:   Call to API for sentence        
+        sentence = self.sentence_generator.generateSentence(keywords=keyword_list)
         #   Call annotator through webcam feed handle
         self.webcamFeed.update_signing_status(sentence=sentence)
         #   Reset labels        
@@ -177,7 +180,7 @@ class MainWindow(QWidget):
         self.current_detection_placeholder.setText("<b>" + detected_keyword + "</b>")
 
     def update_keywords_placeholder(self, detected_keywords):
-        self.detected_keywords_placeholder.setText("<b>" + label_data + "</b>")
+        self.detected_keywords_placeholder.setText("<b>" + str(detected_keywords) + "</b>")
 
 #Create an instance of QApplication
 app = QApplication(sys.argv)
