@@ -14,7 +14,7 @@ fmt = pyvirtualcam.PixelFormat.BGR
 
 class WebcamFeed:
 
-    def __init__(self):
+    def __init__(self, app_reference):
         # Defining configuration for camera
         self.handler = None
          # Initialize empty occurence counter for voting
@@ -22,6 +22,7 @@ class WebcamFeed:
         self.keywords = []
         self.reset_occurence_counter()
         self.allow_inference = False
+        self.gui_reference = app_reference
 
     def set_inference_status(self, allowed):
         self.allow_inference = allowed
@@ -133,23 +134,29 @@ class WebcamFeed:
                                     if (delta.seconds + delta.microseconds * (10 ** -6)) >= not_signing_interrupt_interval:
                                         # print("Not signing threshold exceeded ", delta.seconds)
                                         maximum_occuring = np.argmax(self.occurence_counter)
+                                        self.gui_reference.update_detection_label(actions[maximum_occuring])
                                         # print("Occurence counter : ", maximum_occuring)
                                         # Check most occurring
-                                        if np.argmax(self.occurence_counter) != 0:                                                                                
-                                            self.keywords.append(actions[maximum_occuring])
-                                            gesture += actions[maximum_occuring] + ", "
-                                            start_not_signing = None
-                                            end_not_signing = None                 
-                                            # Refresh occurence counter
-                                            self.reset_occurence_counter()
-                                            print(gesture)               
+                                        if np.argmax(self.occurence_counter) != 0:   
+                                            #   If sign is not detected already
+                                            if actions[maximum_occuring] not in gesture:                                                                             
+                                                self.keywords.append(actions[maximum_occuring])
+                                                gesture += actions[maximum_occuring] + ", "
+                                                start_not_signing = None
+                                                end_not_signing = None                 
+                                                # Refresh occurence counter
+                                                self.reset_occurence_counter()
+                                                print(gesture)               
+                                                self.gui_reference.update_keywords_placeholder(self.keywords)
                             else:
                                 # Update frequency
                                 self.occurence_counter[max_index] += 1
-                            frame = landmarkDetection.prob_viz(
-                                res=result,
-                                input_frame=frame,                    
-                            )        
+                                maximum_occuring = np.argmax(self.occurence_counter)
+                                self.gui_reference.update_detection_label(actions[maximum_occuring])
+                            # frame = landmarkDetection.prob_viz(
+                            #     res=result,
+                            #     input_frame=frame,                    
+                            # )        
                         # cv2.putText(
                         #     frame, 
                         #     gesture, 
