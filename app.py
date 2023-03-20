@@ -14,7 +14,7 @@ from PyQt6.QtGui import QPixmap
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-
+        self.inference_allowed = False
         self.webcamFeed = WebcamFeed()
 
         self.setWindowTitle("My App")
@@ -22,7 +22,7 @@ class MainWindow(QWidget):
         #self.setContentsMargins(100,100,100,100)
         self.started=False
 #                 left,top,width,height
-        self.setGeometry(600, 250, 290, 290)
+        self.setGeometry(600, 250, 290, 400)
         # helloMsg = QLabel("<h1>Welcome, User!</h1>", parent=self)
         # helloMsg.move(0, 0)
         layout = QVBoxLayout()
@@ -68,10 +68,30 @@ class MainWindow(QWidget):
         """)
         self.confirm_button.setCheckable(True)
         self.confirm_button.clicked.connect(self.confirm_sentence)
+
+         #   Add button to confirm sentence
+        self.toggle_inference_button = QPushButton("Start signing")
+        self.toggle_inference_button.setStyleSheet("""
+        *{
+            background-color: rgb(128, 60, 224);
+            border-style: outset;
+            border-width: 2px;
+            border-radius: 10px;
+            border-color: beige;
+            font: bold 14px;
+            padding: 6px;
+        }
+        QPushButton:hover{
+            background-color: rgb(193, 81, 241);
+        }
+        """)
+        self.toggle_inference_button.setCheckable(True)
+        self.toggle_inference_button.clicked.connect(self.toggle_inference)
         
         layout.addWidget(self.label)
         layout.addWidget(self.button)
         layout.addWidget(self.confirm_button)
+        layout.addWidget(self.toggle_inference_button)
         self.setLayout(layout)
 
     def toggle_feed(self):
@@ -91,6 +111,14 @@ class MainWindow(QWidget):
         self.webcamFeed.reset_occurence_counter()
         self.webcamFeed.keywords = []
         print(keyword_list)
+
+    def toggle_inference(self):
+        if not self.inference_allowed:
+            self.toggle_inference_button.setText("Stop signing")
+        else:
+            self.toggle_inference_button.setText("Start signing")
+        self.inference_allowed = not self.inference_allowed    
+        self.webcamFeed.set_inference_status(allowed=self.inference_allowed)
 
 #Create an instance of QApplication
 app = QApplication(sys.argv)

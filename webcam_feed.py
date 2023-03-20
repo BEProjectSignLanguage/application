@@ -21,6 +21,10 @@ class WebcamFeed:
         self.occurence_counter = []
         self.keywords = []
         self.reset_occurence_counter()
+        self.allow_inference = False
+
+    def set_inference_status(self, allowed):
+        self.allow_inference = allowed
 
     def reset_keywords(self):
         self.keywords = []
@@ -111,7 +115,7 @@ class WebcamFeed:
                         # is_signing = gestureDetection.predict(keypoints)                      
                         # if is_signing and len(sequence) == frame_buffer:
                         # Run classification
-                        if len(sequence) == frame_buffer:
+                        if self.allow_inference and len(sequence) == frame_buffer:
                             result, max_index = gestureInterpretation.predict(
                                 sequence=sequence
                             )       
@@ -162,8 +166,8 @@ class WebcamFeed:
                     else:
                         print("Camera load failed")
                         break
-                    if key == ord('q'):
-                        break
+                    if key == ord('q'):                        
+                        break                    
                     # previous = now
                     
     def stop_feed(self):
@@ -178,5 +182,7 @@ class WebcamFeed:
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    pass
+    webcam = WebcamFeed()
+
+    webcam.run_feed()
             
