@@ -76,7 +76,7 @@ class MainWindow(QWidget):
             """)
         
         #   Buttons
-        self.button = QPushButton("Connect to livefeed")
+        self.button = QPushButton("Start camera")
         self.button.setStyleSheet("""
         *{
             background-color: rgb(128, 60, 224);
@@ -95,7 +95,7 @@ class MainWindow(QWidget):
         self.button.clicked.connect(self.toggle_feed)
 
         #   Add button to confirm sentence
-        self.confirm_button = QPushButton("Confirm sentence")
+        self.confirm_button = QPushButton("Generate sentence")
         self.confirm_button.setStyleSheet("""
         *{
             background-color: rgb(128, 60, 224);
@@ -131,6 +131,25 @@ class MainWindow(QWidget):
         """)
         self.toggle_inference_button.setCheckable(True)
         self.toggle_inference_button.clicked.connect(self.toggle_inference)
+
+        #   Add button to confirm sentence
+        self.clear_button = QPushButton("Clear detections")
+        self.clear_button.setStyleSheet("""
+        *{
+            background-color: rgb(128, 60, 224);
+            border-style: outset;
+            border-width: 2px;
+            border-radius: 10px;
+            border-color: beige;
+            font: bold 14px;
+            padding: 6px;
+        }
+        QPushButton:hover{
+            background-color: rgb(193, 81, 241);
+        }
+        """)
+        self.clear_button.setCheckable(True)
+        self.clear_button.clicked.connect(self.clear_detections)
         
         # layout.addWidget(self.label)
         layout.addWidget(self.button)        
@@ -140,19 +159,20 @@ class MainWindow(QWidget):
         layout.addWidget(self.detected_keywords_label)
         layout.addWidget(self.detected_keywords_placeholder)
         layout.addWidget(self.confirm_button)
+        layout.addWidget(self.clear_button)
         
         self.setLayout(layout)
 
     def toggle_feed(self):
         if not self.started:
             self.started=True
-            self.button.setText("Disconnect livefeed")
+            self.button.setText("Stop Camera")
             self.webcamFeed.run_feed()
             print("Connected!")
         else:
             self.started=False
             self.webcamFeed.stop_feed()
-            self.button.setText("Connect to livefeed")            
+            self.button.setText("Start Camera")            
             print("Disconnected!")
 
     def confirm_sentence(self):
@@ -176,10 +196,20 @@ class MainWindow(QWidget):
         self.inference_allowed = not self.inference_allowed    
         self.webcamFeed.set_inference_status(allowed=self.inference_allowed)
 
-    def update_detection_label(self, detected_keyword):
-        self.current_detection_placeholder.setText("<b>" + detected_keyword + "</b>")
+    def clear_detections(self):
+        self.webcamFeed.reset_keywords()
+        self.webcamFeed.gesture = ""
+        self.webcamFeed.reset_occurence_counter()
+        self.update_keywords_placeholder("Reset for detection")
+        self.update_detection_label("Reset for detection")
 
+    def update_detection_label(self, detected_keyword):        
+        if detected_keyword != "not signing":
+            self.current_detection_placeholder.setText("<b>" + detected_keyword + "</b>")
+    
     def update_keywords_placeholder(self, detected_keywords):
+        if detected_keywords != "Reset for detection":
+            detected_keywords = ", ".join(detected_keywords)
         self.detected_keywords_placeholder.setText("<b>" + str(detected_keywords) + "</b>")
 
 #Create an instance of QApplication
