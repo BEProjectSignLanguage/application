@@ -25,7 +25,7 @@ class WebcamFeed:
         self.gui_reference = app_reference
         self.signing_status = "Not Signing"
         self.sentence_display_start = None
-        self.sentence_display_end = None
+        self.sentence_display_end = None        
 
     def update_signing_status(self, sentence):
         self.signing_status = sentence
@@ -85,8 +85,7 @@ class WebcamFeed:
         self.handler.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
         self.handler.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT) 
         
-        sequence = []    
-        gesture = ""
+        sequence = []            
 
         # Open mediapipe holistic
         with mp_holistic.Holistic(
@@ -150,14 +149,12 @@ class WebcamFeed:
                                         # Check most occurring
                                         if np.argmax(self.occurence_counter) != 0:   
                                             #   If sign is not detected already
-                                            if actions[maximum_occuring] not in gesture:                                                                             
-                                                self.keywords.append(actions[maximum_occuring])
-                                                gesture += actions[maximum_occuring] + ", "
+                                            if actions[maximum_occuring] not in self.keywords:                                                                             
+                                                self.keywords.append(actions[maximum_occuring])                                                
                                                 start_not_signing = None
                                                 end_not_signing = None                 
                                                 # Refresh occurence counter
-                                                self.reset_occurence_counter()
-                                                print(gesture)               
+                                                self.reset_occurence_counter()                                                
                                                 self.gui_reference.update_keywords_placeholder(self.keywords)
                             else:
                                 # Update frequency
