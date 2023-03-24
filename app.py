@@ -19,8 +19,8 @@ class MainWindow(QWidget):
         self.webcamFeed = WebcamFeed(self)
         self.sentence_generator = sentenceGeneration()
 
-        self.setWindowTitle("My App")
-        self.setWindowTitle("Sign Language detector App")
+        #   self.setWindowTitle("My App")
+        self.setWindowTitle("Aikyam")
         #self.setContentsMargins(100,100,100,100)
         self.started=False
 #                 left,top,width,height
@@ -42,7 +42,7 @@ class MainWindow(QWidget):
             height: fit-content
         }
         """)
-        self.detected_keywords_label = QLabel("<b>Detected keywords</b>", parent=self)
+        self.detected_keywords_label = QLabel("<b>Detected signs</b>", parent=self)
         self.detected_keywords_label.setStyleSheet(""" 
         *{
             height: fit-content
@@ -76,7 +76,7 @@ class MainWindow(QWidget):
             """)
         
         #   Buttons
-        self.button = QPushButton("Connect to livefeed!")
+        self.button = QPushButton("Connect to livefeed")
         self.button.setStyleSheet("""
         *{
             background-color: rgb(128, 60, 224);
@@ -152,7 +152,7 @@ class MainWindow(QWidget):
         else:
             self.started=False
             self.webcamFeed.stop_feed()
-            self.button.setText("Connect to livefeed!")            
+            self.button.setText("Connect to livefeed")            
             print("Disconnected!")
 
     def confirm_sentence(self):
