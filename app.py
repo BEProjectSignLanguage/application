@@ -1,5 +1,6 @@
 import sys
 from subprocess import call
+import virtual_mic
 #Import QApplication and all the required widgets
 from webcam_feed import WebcamFeed
 from PyQt6.QtWidgets import (
@@ -181,6 +182,7 @@ class MainWindow(QWidget):
         self.webcamFeed.keywords = []
         #   TODO:   Call to API for sentence        
         sentence = self.sentence_generator.generateSentence(keywords=keyword_list)
+        virtual_mic.play()
         #   Call annotator through webcam feed handle
         self.webcamFeed.update_signing_status(sentence=sentence)
         #   Reset labels        
