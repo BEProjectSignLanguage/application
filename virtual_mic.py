@@ -21,3 +21,4 @@ def play():
     mixer.music.play() 
     while mixer.music.get_busy():  
         time.sleep(1)
+    mixer.quit() 
